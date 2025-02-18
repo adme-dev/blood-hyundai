@@ -1,0 +1,36 @@
+# Redirect .well-known requests
+/.well-known/* /  301
+
+# Home page redirect
+/home /  301
+
+# Front page redirect
+/front /  301
+
+# Redirect legacy PHP files and specific vehicle pages to the homepage
+/simple.php / 301
+/index.php / 301
+/cgi-bin/xmrlpc.php / 301
+/xmrlpc.php / 301
+/about.php / 301
+/dropdown.php / 301
+/chosen.php / 301
+/alfanew.php / 301
+/themes.php / 301
+/wp-mail.php / 301
+
+# Redirect carsales-feed requests to the serverless function
+/carsales-feed /.netlify/functions/carsales-feed 200
+
+# Redirect facebook requests to the serverless function
+/facebook-api.xml /.netlify/functions/facebook-api 200
+
+# Redirect google requests to the serverless function
+/google-api.xml /.netlify/functions/google-api 200
+
+/fetchReviews /.netlify/functions/fetchReviews 200
+
+# Redirect sitemap.xml requests to the serverless function
+/sitemap.xml /.netlify/functions/sitemap 200
+
+/*  /index.html  200

@@ -1,0 +1,50 @@
+{
+  "name": "drive-agent",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build"
+  },
+  "dependencies": {
+    "axios": "^1.4.0",
+    "core-js": "^3.30.2",
+    "csv-parser": "^3.0.0",
+    "driveagent-ui": "git+https://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:x-oauth-basic@github.com/adme-dev/driveagent-ui.git",
+    "element-ui": "^2.15.14",
+    "fuse.js": "^7.0.0",
+    "image-minimizer-webpack-plugin": "^1.0.0",
+    "lodash": "^4.17.21",
+    "luxon": "^3.1.0",
+    "node-cache": "^5.1.2",
+    "pako": "^2.0.4",
+    "sass": "^1.63.6",
+    "sitemap": "^7.1.1",
+    "square": "^13.1.0",
+    "stripe": "^8.169.0",
+    "uikit": "3.21.13",
+    "uuid": "^8.3.2",
+    "vue": "2.7.16",
+    "vue-fb-customer-chat": "^0.2.0",
+    "vue-gtag": "^1.16.1",
+    "vue-gtm": "3.0.0-vue2",
+    "vue-meta": "^2.4.0",
+    "vue-router": "^3.6.5",
+    "vuejs-uib-pagination": "^1.0.6",
+    "vuelidate": "^0.7.7",
+    "vuex": "^3.6.2",
+    "xmlbuilder": "^15.1.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "babel-plugin-component": "^1.1.1",
+    "compression-webpack-plugin": "^6.1.1",
+    "hard-source-webpack-plugin": "^0.13.1",
+    "imagemin-mozjpeg": "^10.0.0",
+    "sass-loader": "^8.0.2",
+    "vue-template-compiler": "^2.7.16"
+  }
+}

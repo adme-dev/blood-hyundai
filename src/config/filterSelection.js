@@ -1,0 +1,15 @@
+export default {
+  condition: [],
+  make: [],
+  model: "",
+  badge: "",
+  search_keywords: "",
+  price: [],
+  kms: [],
+  body: [],
+  transmission: [],
+  drivetrain: [],
+  fuel: [],
+  seats: [],
+  doors: [],
+};
