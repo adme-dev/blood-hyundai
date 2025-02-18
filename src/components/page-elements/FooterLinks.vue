@@ -181,15 +181,6 @@
         </div>
       </div>
 
-      <div>
-        <div class="uk-container uk-container-large uk-overflow-hidden">
-        <div class="uk-flex uk-flex-center uk-flex-right@s uk-grid">
-          <div>
-            <img data-src="https://driveagentmedia.b-cdn.net/files/shared/logos/twg/Part-of-Tony-White-Group.png" alt="Tony White Group" width="450" height="119" class="uk-margin-medium-right uk-responsive" uk-img />
-          </div>
-        </div>
-       </div>
-      </div>
     
     </div>
 
