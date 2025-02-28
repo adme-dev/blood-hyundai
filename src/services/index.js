@@ -1,6 +1,5 @@
 import Vue from "vue";
 import VueGtag from "vue-gtag";
-import VueFbCustomerChat from "vue-fb-customer-chat";
 import App from "@/App.vue";
 import router from "@/router";
 import VueGtm from "vue-gtm";
@@ -14,12 +13,36 @@ import VehicleService from "./vehicle";
 import VariantService from "./variant";
 import AccessoriesService from "./accessories";
 import PageService from "./page";
+import OemPageService from "./oemPage";
 import ModelService from "./model";
 import BrandService from "./brand";
+//import BlogService from "./blog"
+// import PrimaryVehiclesOffers from "./offer-test"
+// import PrimaryVehicleOfferSingle from "./offer-test-single"
 import StripeService from "./stripe";
 import initialState from "@/config/initialState";
 const initVue = (queryStringParams) => {
-  getSiteConfig().then((siteConfig) => {
+  getSiteConfig().then(async (siteConfig) => {
+
+    const unInterceptedAxios = axios.create();
+    const offerSlides = await unInterceptedAxios
+      .get(`${process.env.VUE_APP_OEM_RAW_CDN_URL}/OEM4328267.json`)
+      .then((res) => {
+        return res.data;
+      })
+      .catch((error) => {
+        console.error("error getting promotional data", error);
+      });
+      if (offerSlides){
+      forEach(offerSlides['header_slides'], (slide)=>{
+        siteConfig.promotional[0].slides.push(slide)
+      })
+      forEach(offerSlides['promotional_thumbs'], (slide)=>{
+        siteConfig.promotional[0].thumbs.push(slide)
+      })
+      siteConfig.promotional.push([{offerbanner: offerSlides.single_strip_banner}])
+    }
+
     initialState.site = siteConfig;
     /** Google Analytics */
     let config = {};
@@ -64,7 +87,6 @@ const initVue = (queryStringParams) => {
     //   });
     // }
 
-    
     new Vue({
       router,
       store: store(initialState),
@@ -116,7 +138,11 @@ export {
   VariantService,
   AccessoriesService,
   PageService,
+  OemPageService,
   ModelService,
   BrandService,
+  //BlogService,
   StripeService,
+  // PrimaryVehiclesOffers,
+  // PrimaryVehicleOfferSingle
 };
