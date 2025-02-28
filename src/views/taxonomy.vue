@@ -514,7 +514,7 @@ export default {
 
     currentSearchTitle() {
       const { condition, make, model } = this.$route.params;
-      let location = "Traralgon, VIC"; // Replace with actual location logic if needed
+      let location = "Geelong, VIC"; // Replace with actual location logic if needed
       let titleParts = [];
       let title = ''; // Declare title here
 

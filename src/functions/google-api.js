@@ -107,22 +107,22 @@ const slugify = (str) =>
 
     exports.handler = async (event, context) => {
       try {
-        const response = await axios.get('https://driveagent.b-cdn.net/files/traralgon-hyundai/carsales/dataSampleKey.json');
+        const response = await axios.get('https://driveagent.b-cdn.net/files/blood-hyundai/carsales/dataSampleKey.json');
         const jsonData = response.data;
     
         const feed = xmlbuilder.create('rss', { version: '1.0', encoding: 'UTF-8' });
         feed.att('xmlns:g', 'http://base.google.com/ns/1.0');
         const channel = feed.ele('channel');
-        channel.ele('title', 'Traralgon Hyundai');
-        channel.ele('link', 'https://traralgonhyundai.com.au');
-        channel.ele('description', 'Product feed for Traralgon Hyundai');
+        channel.ele('title', 'blood Hyundai');
+        channel.ele('link', 'https://bloodhyundai.com.au');
+        channel.ele('description', 'Product feed for blood Hyundai');
     
         jsonData.forEach(item => {
           const product = channel.ele('item');
           product.ele('g:id', item.id);
           product.ele('g:title', item.title);
           product.ele('g:description', processDescription(item.Comments || 'More info coming soon!'));
-          product.ele('g:link_template', `https://traralgonhyundai.com.au/vehicle-for-sale/${item.stockid}/${slugify(item.title)}?store={store_code}`);
+          product.ele('g:link_template', `https://bloodhyundai.com.au/vehicle-for-sale/${item.stockid}/${slugify(item.title)}?store={store_code}`);
           product.ele('g:image_link', item.photos && item.photos[0] ? item.photos[0].Url : '');
           product.ele('g:condition', item.condition.displayValue ? item.condition.displayValue[0] : '');
           product.ele('g:body_style', mapBodyStyle(item.body.displayValue ? item.body.displayValue[0] : ''));
@@ -139,7 +139,7 @@ const slugify = (str) =>
           product.ele('g:year', item.year.displayValue[0]);
           product.ele('g:mileage', `'${item.kms} KM'`);
           product.ele('g:vin', item.vin);
-          product.ele('g:store_address', 'Lot 1 Princes Hwy, Traralgon VIC 3844, Australia');
+          product.ele('g:store_address', 'Lot 1 Princes Hwy, blood VIC 3844, Australia');
           product.ele('g:store_code', 'GHYUNDAI3844');
               // Add other necessary Google Merchant attributes here...
             });

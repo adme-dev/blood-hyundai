@@ -55,7 +55,7 @@ const fetchJson = async (url, errorMessage) => {
 exports.handler = async () => {
   try {
     const navigationJson = await fetchJson(
-      'https://driveagent.b-cdn.net/files/traralgon-hyundai/config/config.json',
+      'https://driveagent.b-cdn.net/files/blood-hyundai/config/config.json',
       'Error reading navigation JSON:'
     );
     const modelsJson = await fetchJson(
@@ -67,7 +67,7 @@ exports.handler = async () => {
       'Error reading variants:'
     );
     const fetchedJsonCarsalesData = await fetchJson(
-      'https://driveagent.b-cdn.net/files/traralgon-hyundai/carsales/dataSampleKey.json',
+      'https://driveagent.b-cdn.net/files/blood-hyundai/carsales/dataSampleKey.json',
       'Error reading fetched JSON:'
     );
 
@@ -123,7 +123,7 @@ exports.handler = async () => {
 const links = [...pageLinks, ...carsalesLinks, ...modelLinks, ...variantLinks];
 
 const stream = new SitemapStream({
-  hostname: 'https://traralgonhyundai.com.au',
+  hostname: 'https://bloodhyundai.com.au',
 });
 const xmlString = await streamToPromise(
   Readable.from(links).pipe(stream)

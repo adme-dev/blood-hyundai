@@ -107,12 +107,12 @@ const slugify = (str) =>
 
 exports.handler = async (event, context) => {
   try {
-    const response = await axios.get('https://driveagent.b-cdn.net/files/traralgon-hyundai/carsales/dataSampleKey.json');
+    const response = await axios.get('https://driveagent.b-cdn.net/files/blood-hyundai/carsales/dataSampleKey.json');
     const jsonData = response.data;
 
     const listings = xmlbuilder.create('listings');
-    listings.ele('title', 'Traralgon Hyundai');
-    listings.ele('link', { rel: 'self', href: 'https://traralgonhyundai.com.au/cars-sales/?r=vddn' });
+    listings.ele('title', 'blood Hyundai');
+    listings.ele('link', { rel: 'self', href: 'https://bloodhyundai.com.au/cars-sales/?r=vddn' });
 
     
       jsonData.forEach(item => {
@@ -124,7 +124,7 @@ exports.handler = async (event, context) => {
         const cleanedDescription = processDescription(item.Comments || 'More info coming soon!');
         listing.ele('description', cleanedDescription);
        
-        listing.ele('url', `https://traralgonhyundai.com.au/vehicle-for-sale/${item.stockid}/${slugify(item.title)}`);
+        listing.ele('url', `https://bloodhyundai.com.au/vehicle-for-sale/${item.stockid}/${slugify(item.title)}`);
         listing.ele('make', item.make.displayValue ? item.make.displayValue[0] : '');
         
         // if (item.photos && item.photos[0]) {
@@ -156,11 +156,11 @@ exports.handler = async (event, context) => {
         listing.ele('vehicle_registration_plate', item.rego ? item.rego : '');
         listing.ele('fb_page_id', 102269038811366);
         listing.ele('dealer_communication_channel', 'LEAD_FORM');
-        listing.ele('dealer_privacy_policy_url', 'https://traralgonhyundai.com.au/privacy-policy');
+        listing.ele('dealer_privacy_policy_url', 'https://bloodhyundai.com.au/privacy-policy');
       
         const addressElement = listing.ele('address', { format: 'simple' });
         addressElement.ele('component', { name: 'addr1' }, 'Lot 1 Princes Hwy');
-        addressElement.ele('component', { name: 'city' }, 'Traralgon');
+        addressElement.ele('component', { name: 'city' }, 'blood');
         addressElement.ele('component', { name: 'region' }, 'VIC');
         addressElement.ele('component', { name: 'country' }, 'Australia');
         addressElement.ele('component', { name: 'postal_code' }, '3844');
