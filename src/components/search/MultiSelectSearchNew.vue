@@ -51,16 +51,16 @@
             <div
               class="uk-grid-small uk-text-large uk-text-center uk-child-width-1-1 uk-margin-small uk-margin-small-top uk-child-width-auto@s uk-grid uk-visible@l">
               <!-- Found: <b class="uk-text-primary">{{ filteredList.length }} Vehicles</b> -->
-              <div><router-link to="/car-sales?page=1"
+              <div @click="closeGlobalSearchSwitch()"><router-link to="/car-sales?page=1"
                   class="uk-button uk-button-small uk-border-pill uk-button-default">Total Vehicles:
                   <b>{{ totalVehicles }}</b> </router-link></div>
-              <div><router-link to="/car-sales?condition=new&page=1"
+                  <div @click="closeGlobalSearchSwitch()"><router-link to="/car-sales?condition=new&page=1"
                   class="uk-button uk-button-small uk-border-pill uk-button-default">New Vehicles: <b>{{
                     newVehiclesCount }}</b></router-link></div>
-              <div><router-link to="/car-sales?condition=demo&page=1"
+              <div @click="closeGlobalSearchSwitch()"><router-link to="/car-sales?condition=demo&page=1"
                   class="uk-button uk-button-small uk-border-pill uk-button-default">Demo Vehicles: <b>{{
                     demoVehiclesCount }}</b></router-link></div>
-              <div><router-link to="/car-sales?condition=used&page=1"
+              <div @click="closeGlobalSearchSwitch()"><router-link to="/car-sales?condition=used&page=1"
                   class="uk-button uk-button-small uk-border-pill uk-button-default">Used Vehicles: <b>{{
                     usedVehiclesCount }}</b></router-link></div>
             </div>
@@ -74,13 +74,13 @@
                 car.</b></router-link></div> -->
 
         <div v-if="isFilterActive">
-          <div class="uk-h3 uk-text-center uk-margin-remove">
+          <div class="uk-h3 uk-text-center uk-margin-small-top">
             Found <b>{{ filteredList.length }}</b> vehicle<span v-if="filteredList.length !== 1">s</span>
           </div>
         </div>
 
         <div v-else>
-          <div class="uk-h3 uk-text-center uk-margin-remove">
+          <div class="uk-h3 uk-text-center uk-margin-small-top">
             <b>{{ filteredList.length }}</b> vehicles to explore
           </div>
         </div>
@@ -410,6 +410,7 @@ const createSearchIndex = memoize((vehicles) => {
     // Add condition to searchable text
     const searchableText = [
       vehicle.title,
+      vehicle.stockid,
       vehicle.make?.displayValue?.[0],
       vehicle.model?.displayValue?.[0],
       vehicle.body?.displayValue?.[0],
@@ -1330,72 +1331,107 @@ export default {
    * and resets localStorage values.
    */
    searchQuery() {
-    const query = {};
+  const query = {};
 
-    // Add query parameters for filters
-    this.addQueryParam(query, 'condition', this.filter.condition);
-    this.addQueryParam(query, 'make', this.filter.make);
-    this.addQueryParam(query, 'model', this.filter.model);
-    this.addQueryParam(query, 'body', this.filter.body);
+  // Check if only the 'make' filter is selected and no other filters are active
+  const isOnlyMakeSelected =
+    this.filter.make.length > 0 && // Make filter is active
+    this.filter.condition.length === 0 && // No condition filter
+    this.filter.model.length === 0 && // No model filter
+    this.filter.body.length === 0 && // No body filter
+    this.priceRange[0] === this.sliderOptions.min && // Price range is default
+    this.priceRange[1] === this.sliderOptions.max && // Price range is default
+    this.perWeekRange[0] === this.perWeekSliderOptions.min && // Weekly budget is default
+    this.perWeekRange[1] === this.perWeekSliderOptions.max; // Weekly budget is default
 
-    // Add search keywords if present
+  // Debugging: Log the state of filters and isOnlyMakeSelected
+  console.log('isOnlyMakeSelected:', isOnlyMakeSelected);
+  console.log('Filters:', this.filter);
+  console.log('Price Range:', this.priceRange);
+  console.log('Weekly Budget Range:', this.perWeekRange);
+
+  // If only 'make' is selected, dynamically set search_keywords to the selected make
+  if (isOnlyMakeSelected) {
+    const selectedMake = this.filter.make[0]; // Get the first selected make
+    query.search_keywords = this.slugify(selectedMake); // Slugify the selected make
+  } else {
+    // Otherwise, add all filters and search keywords as usual
+    if (this.filter.condition.length > 0) {
+      query.condition = this.filter.condition.map(this.slugify).join(',');
+    }
+    if (this.filter.make.length > 0) {
+      query.make = this.filter.make.map(this.slugify).join(',');
+    }
+    if (this.filter.model.length > 0) {
+      query.model = this.filter.model.map(this.slugify).join(',');
+    }
+    if (this.filter.body.length > 0) {
+      query.body = this.filter.body.map(this.slugify).join(',');
+    }
     if (this.searchText.trim() !== '') {
-      query.search_keywords = this.searchText.trim();
+      query.search_keywords = this.slugify(this.searchText.trim());
     }
-
-    // Add price range if different from default
     if (this.priceRange[0] !== this.sliderOptions.min || this.priceRange[1] !== this.sliderOptions.max) {
-      query.price = `${this.priceRange[0]},${this.priceRange[1]}`;
+      query.price = `${this.priceRange[0]},${this.priceRange[1]}`; // Price range doesn't need slugging
     }
-
-    // Add weekly budget range if different from default
     if (this.perWeekRange[0] !== this.perWeekSliderOptions.min || this.perWeekRange[1] !== this.perWeekSliderOptions.max) {
-      const roundedMin = Math.round(this.perWeekRange[0]);
-      const roundedMax = Math.round(this.perWeekRange[1]);
-      query.perweek = `${roundedMin},${roundedMax}`;
+      query.perweek = `${this.perWeekRange[0]},${this.perWeekRange[1]}`; // Weekly budget doesn't need slugging
     }
+  }
 
-    // Add page parameter for car-sales route
-    if (this.$route.path === '/car-sales') {
-      query.page = 1; // Reset to first page when applying new filters
-    }
+  // Add page parameter for car-sales route
+  if (this.$route.path === '/car-sales') {
+    query.page = 1; // Reset to first page when applying new filters
+  }
 
+  // Determine the target path
+  const path = this.$route.path === '/car-sales' ? '/car-sales' : '/car-sales';
 
+  // Debugging: Log the final query object
+  console.log('Final Query:', query);
 
-    // Determine the target path
-    const path = this.$route.path === '/car-sales' ? '/car-sales' : '/car-sales';
+  // Navigate to the search results
+  this.$router.push({ path, query })
+    .then(() => {
+      setTimeout(() => {
+        // Reset localStorage values
+        localStorage.setItem("pageSize", "12");
+        localStorage.setItem('scrollPosition', "0");
 
-    // Navigate to the search results
-    this.$router.push({ path, query })
-      .then(() => {
-        setTimeout(function() {
-
-              // Reset localStorage values
-    localStorage.setItem("pageSize", "12");
-    localStorage.setItem('scrollPosition', "0");
-    
         // Scroll to top after navigation is complete
         window.scrollTo({
           top: 0,
           behavior: 'smooth' // Use smooth scrolling for better UX
         });
       }, 100);
-      })
-      .catch((err) => {
-        if (err.name !== 'NavigationDuplicated') {
-          console.error('Navigation error:', err);
-        } else {
-          // Even if navigation is duplicated, still scroll to top
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-        }
-      });
+    })
+    .catch((err) => {
+      if (err.name !== 'NavigationDuplicated') {
+        console.error('Navigation error:', err);
+      } else {
+        // Even if navigation is duplicated, still scroll to top
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }
+    });
 
-    // Close global search if it's open
-    this.closeGlobalSearchSwitch();
-  },
+  // Close global search if it's open
+  this.closeGlobalSearchSwitch();
+},
+
+/**
+ * Slugify a string (convert to URL-friendly format).
+ * @param {String} str - The string to slugify.
+ * @returns {String} - The slugified string.
+ */
+slugify(str) {
+  return str
+    .toLowerCase() // Convert to lowercase
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/[^\w-]+/g, ''); // Remove all non-word characters (except hyphens)
+},
 
   /**
    * Closes the global search interface and optionally passes selected item.
@@ -1920,7 +1956,7 @@ body.uk-overflow-hidden .el-select-dropdown.el-popper.adme-dropdown {
   z-index: 99999999;
 }
 
-.el-select-dropdown__wrap {
+.adme-dropdown .el-select-dropdown__wrap {
   width: 350px;
 }
 
@@ -1963,7 +1999,7 @@ body.uk-overflow-hidden .el-select-dropdown.el-popper.adme-dropdown {
 }
 
 
-.el-select-dropdown {
+.el-select-dropdown.adme-dropdown  {
   border: 2px solid #1a78e4;
   border-radius: 20px;
   background-color: #101013;
@@ -1971,7 +2007,7 @@ body.uk-overflow-hidden .el-select-dropdown.el-popper.adme-dropdown {
   margin: 5px 0;
 }
 
-.el-select-dropdown__item {
+.adme-dropdown .el-select-dropdown__item {
   color: #f8f8f8;
   transition: .2s;
 }
@@ -2040,16 +2076,14 @@ body.uk-overflow-hidden .el-select-dropdown.el-popper.adme-dropdown {
 }
 
 .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
-  color: #000 !important;
+  color: #fff !important;
   padding-left: 15px;
   font-size: 400;
   border-radius: 10px;
   background-color: #1a78e4 !important;
 }
 
-.el-select-dropdown.is-multiple .el-select-dropdown__item.selected .uk-text-muted {
-  color: #333 !important
-}
+
 
 .popular-v {
   position: relative;
@@ -2322,7 +2356,7 @@ body.uk-overflow-hidden .el-select-dropdown.el-popper.adme-dropdown {
 }
 
 .front-search-container .el-icon-circle-close,
-.el-select .el-input .el-select__caret {
+.front-search-containe .el-select .el-input .el-select__caret {
   color: #fff;
   font-size: 22px !important;
   margin: 1px 5px;

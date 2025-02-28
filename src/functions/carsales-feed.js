@@ -254,13 +254,8 @@ exports.handler = async function(event, context) {
   console.log('Cache miss');
 
   const urls = [
-    'https://tsheefvkecaervnrxvdf.supabase.co/storage/v1/object/public/bucket/wights-hyundai/data.json',
-    'https://tsheefvkecaervnrxvdf.supabase.co/storage/v1/object/public/bucket/traralgon-automotive-group-hyundai/data.json',
-    'https://tsheefvkecaervnrxvdf.supabase.co/storage/v1/object/public/bucket/wights-toyota/data.json',
-    'https://tsheefvkecaervnrxvdf.supabase.co/storage/v1/object/public/bucket/traralgon-automotive-group-ssangyong/data.json',
-    'https://tsheefvkecaervnrxvdf.supabase.co/storage/v1/object/public/bucket/traralgon-nissan/data.json',
-    'https://tsheefvkecaervnrxvdf.supabase.co/storage/v1/object/public/bucket/traralgon-nissan/data.json',
-    'https://tsheefvkecaervnrxvdf.supabase.co/storage/v1/object/public/bucket/traralgon-automotive-group/data.json',
+    'https://tsheefvkecaervnrxvdf.supabase.co/storage/v1/object/public/bucket/blood-hyundai/data.json',
+    'https://tsheefvkecaervnrxvdf.supabase.co/storage/v1/object/public/bucket/blood-motor-group/data.json'
   ];
 
   try {

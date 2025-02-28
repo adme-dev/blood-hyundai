@@ -22,7 +22,7 @@
     "sitemap": "^7.1.1",
     "square": "^13.1.0",
     "stripe": "^8.169.0",
-    "uikit": "3.21.13",
+    "uikit": "3.23.0",
     "uuid": "^8.3.2",
     "vue": "2.7.16",
     "vue-fb-customer-chat": "^0.2.0",

@@ -1,122 +1,104 @@
-const CompressionPlugin = require('compression-webpack-plugin');
-const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
-
-const COMPRESSION_TEST = /\.(js|css|html|svg)$/;
-const COMPRESSION_THRESHOLD = 10240;
-const COMPRESSION_MIN_RATIO = 0.8;
-
-const createCompressionPlugin = (filename, algorithm, compressionOptions = {}) => {
-  return new CompressionPlugin({
-    filename: filename,
-    algorithm: algorithm,
-    test: COMPRESSION_TEST,
-    threshold: COMPRESSION_THRESHOLD,
-    minRatio: COMPRESSION_MIN_RATIO,
-    compressionOptions: compressionOptions,
-  });
-};
+const path = require('path');
 
 module.exports = {
-  runtimeCompiler: true,
+  // Deployment base directory
+  publicPath: process.env.NODE_ENV === 'production' ? '/' : '/',
+  // Output directory for built files
+  outputDir: 'dist',
+  // Directory for static assets
+  assetsDir: 'assets',
+  // Disable source maps in production
   productionSourceMap: false,
-
-  configureWebpack: (config) => {
-    if (process.env.NODE_ENV === 'production') {
-      config.plugins.push(
-        createCompressionPlugin('[path].gz[query]', 'gzip'),
-        createCompressionPlugin('[path].br[query]', 'brotliCompress', { level: 11 }),
-
-        new ImageMinimizerPlugin({
-          minimizerOptions: {
-            plugins: [
-              ['gifsicle', { interlaced: true }],
-              ['jpegtran', { progressive: true }],
-              ['optipng', { optimizationLevel: 5 }],
-              ['svgo', { plugins: [{ removeViewBox: false }] }],
-              ['imagemin-mozjpeg', { quality: 75 }],
-            ],
-          },
-          loader: true,
-        }),
-
-        // HardSourceWebpackPlugin for caching
-        new HardSourceWebpackPlugin()
-      );
+  // Configure webpack-dev-server behavior
+  devServer: {
+    allowedHosts: ['all'], // Changed to array format
+    port: 8080,
+    host: 'localhost',
+    https: false,
+    open: true,
+    proxy: {
+      '/api': {
+        target: process.env.VUE_APP_API_URL || 'http://localhost:3000',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api': ''
+        }
+      }
     }
   },
-
-  chainWebpack: (config) => {
-    config.plugins.delete('preload');
-    config.plugins.delete('prefetch');
-
-    config.optimization.splitChunks({
-      chunks: 'async',
-      minChunks: 2,
-      name: 'commons',
-      cacheGroups: {
-        vendors: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all',
-        },
-        styles: {
-          name: 'styles',
-          test: /\.css$/,
-          chunks: 'all',
-          enforce: true,
-        },
-      },
-    });
-
-    config.performance
-      .maxAssetSize(244 * 1024)
-      .maxEntrypointSize(244 * 1024);
-
-    config.plugin('html').tap((args) => {
-      args[0].title = process.env.VUE_APP_TITLE;
-
-      if (process.env.NODE_ENV === 'production') {
-        args[0].minify = {
-          minifyCSS: true,
-          minifyJS: true,
-          minifyURLs: true,
-          removeComments: true,
-          collapseWhitespace: true,
-          collapseBooleanAttributes: true,
-          removeScriptTypeAttributes: true,
-          removeAttributeQuotes: true,
-          removeEmptyAttributes: true,
-          removeStyleLinkTypeAttributes: true,
-        };
+  // Configure webpack
+  configureWebpack: {
+    // Set performance hints
+    performance: {
+      hints: process.env.NODE_ENV === 'production' ? 'warning' : false,
+      maxEntrypointSize: 512000,
+      maxAssetSize: 512000
+    },
+    // Configure resolve aliases
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, 'src'),
+        '@components': path.resolve(__dirname, 'src/components'),
+        '@views': path.resolve(__dirname, 'src/views'),
+        '@assets': path.resolve(__dirname, 'src/assets'),
+        '@utils': path.resolve(__dirname, 'src/utils')
       }
-
-      return args;
-    });
-
-    
-    config.optimization.usedExports(true);
-
-    config.output
-      .filename('[name].js')
-      .chunkFilename('js/[name].js');
-
-    // Adjusting preload plugin
-    if (config.plugins.has('preload')) {
-      config.plugin('preload').tap((args) => {
-        args[0].include = 'initial';
+    },
+    // Optimize splitting
+    optimization: {
+      splitChunks: {
+        chunks: 'all',
+        minSize: 30000,
+        maxSize: 250000
+      }
+    }
+  },
+  // Configure css
+// Update this section in your config
+css: {
+  sourceMap: process.env.NODE_ENV !== 'production',
+  loaderOptions: {
+    sass: {
+      prependData: `
+        @use "sass:math";
+        @use "sass:color";
+        @use "@/assets/styles/_variables.scss" as *;
+        @use "@/assets/styles/_mixins.scss" as *;
+      `
+    }
+  }
+},
+  // Configure chain webpack
+  chainWebpack: config => {
+    // Set document title from environment variable
+    config
+      .plugin('html')
+      .tap(args => {
+        args[0].title = process.env.VUE_APP_TITLE;
         return args;
       });
-    }
-
-    // Adjusting prefetch plugin
-    if (config.plugins.has('prefetch')) {
-      config.plugin('prefetch').tap((options) => {
-        options[0].fileBlacklist = options[0].fileBlacklist || [];
-        options[0].fileBlacklist.push(/myasyncRoute(.)+?\.js$/);
-        return options;
+    // Remove prefetch plugin
+    config.plugins.delete('prefetch');
+    // Configure SVG loader
+    const svgRule = config.module.rule('svg');
+    svgRule.uses.clear();
+    svgRule
+      .use('vue-svg-loader')
+      .loader('vue-svg-loader')
+      .options({
+        svgo: {
+          plugins: [{ removeViewBox: false }]
+        }
       });
+    // Add compression for production
+    if (process.env.NODE_ENV === 'production') {
+      config.plugin('compression').use(require('compression-webpack-plugin'), [{
+        filename: '[path][base].gz',
+        algorithm: 'gzip',
+        test: /\.js$|\.css$|\.html$/,
+        threshold: 10240,
+        minRatio: 0.8
+      }]);
     }
-
-  },
+  }
 };

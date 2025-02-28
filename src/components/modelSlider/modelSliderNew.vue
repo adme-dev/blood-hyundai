@@ -2,7 +2,7 @@
 <template>
   <div>
     <!-- Header section remains unchanged -->
-    <div class="uk-container uk-text-center uk-margin-small-top uk-overflow-hidden">
+    <div class="uk-container uk-text-center uk-margin-large-top uk-overflow-hidden">
       <div class="uk-container uk-text-center uk-overflow-hidden">
         <div class="uk-text-light space33">HYUNDAI RANGE</div>
         <h2 class="uk-h2 uk-text-lighter uk-margin-small">

@@ -26,7 +26,7 @@
       @change="onChange"
     >
     </el-slider>
-    <div class="uk-text-xsmall" v-if="option.decription" v-html="option.decription"></div>
+    <div class="uk-text-xsmall" v-if="option.description" v-html="option.description"></div>
         </div>
       </li>
 
@@ -102,7 +102,7 @@ export default {
       } else if (this.option.displayName === "Kilometres") {
         return `${this.value[0].toLocaleString()} km`;
       } else if (this.option.name === "perweek") {
-        return `$${this.value[0].toLocaleString()}`;
+        return `$${this.value[0].toLocaleString()} p/w`;
       } else {
         return `${this.value[0]}`;
       }
@@ -113,7 +113,7 @@ export default {
       } else if (this.option.displayName === "Kilometres") {
         return `${this.value[1].toLocaleString()} km`;
       } else if (this.option.name === "perweek") {
-        return `$${this.value[1].toLocaleString()}`;
+        return `$${this.value[1].toLocaleString()} p/w`;
       } else {
         return `${this.value[1]}`;
       }
