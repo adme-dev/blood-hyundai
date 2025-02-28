@@ -38,7 +38,7 @@
             <div class="uk-overflow-hidden" uk-height-viewport>
 
             <div v-if="vehicle.header.slides[0].video">
-             <video :src="`${vehicle.header.slides[0].video}`" loop muted playsinline poster="`${vehicle.header.slides[0].desktop__slide}?auto_optimize=medium`" uk-video="autoplay: inview" uk-cover></video>
+             <video :src="`${vehicle.header.slides[0].video}`" loop muted playsinline poster="`${vehicle.header.slides[0].desktop__slide}`" uk-video="autoplay: inview" uk-cover></video>
             </div>
 
             <div v-else>
