@@ -475,7 +475,7 @@ export default {
       this.errors = true;
     },
     submitForm: function (e) {
-      _satellite.track("contact-thankyou");
+      
       this.isSending = !this.isSending;
       axios
         .post(`${process.env.VUE_APP_PUBLIC_API_URL}/form`, {
