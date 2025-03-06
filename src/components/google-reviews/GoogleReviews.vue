@@ -161,7 +161,8 @@
                   class="uk-slider-items uk-grid-small uk-grid-match uk-flex uk-flex-middle uk-child-width-1-1 uk-grid"
                   uk-height-match=".review-wrap"
                 >
-                  <li v-for="(item, index) in places.result.reviews" :uk-slideshow-item="index" :key="index">
+                
+                  <li v-for="(item, index) in places.result.reviews" :uk-slideshow-item="index" :key="index" v-if="item.rating > 4">
                     <div
                       class="uk-card uk-background-default uk-width-1-1 uk-border-rounded review-wrap"
                       itemprop="aggregateRating"
