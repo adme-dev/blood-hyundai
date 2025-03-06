@@ -141,10 +141,17 @@ const getSelectionsWithValue = (selected) => {
   return selectionsWithValue;
 };
 
-  const GetTime= (time) => {
-      var d = new Date(time);
-      return (d.getHours() > 12 ? d.getHours() - 12 : d.getHours()) + ':' + d.getMinutes().toString().replace(/^(\d)$/, '0$1') + ' ' + (d.getHours() >= 12 ? "pm" : "am");
-    }
+const GetTime = (time) => {
+  const d = new Date(time);
+  // Use UTC methods to respect the GMT+00:00 timezone in the input
+  const hours = d.getUTCHours();
+  const displayHours = hours % 12 || 12; // Convert 0 to 12 for 12 AM
+  const minutes = d.getUTCMinutes();
+  const paddedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+  const ampm = hours >= 12 ? "pm" : "am";
+  
+  return `${displayHours}:${paddedMinutes} ${ampm}`;
+};
 
 const processTradingHours = (hours) => {
   const modifiedHours = {};
