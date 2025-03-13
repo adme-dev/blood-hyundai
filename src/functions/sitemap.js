@@ -7,6 +7,59 @@ const urls = [
   // Unused CSV URLs commented out
 ];
 
+
+const groupedCars = (carsalesData) => {
+  const grouped = {};
+
+  carsalesData.forEach((car) => {
+    // Access the first element of the displayValue array for make and model
+    const make = car.make.displayValue[0];
+    const model = car.model.displayValue[0];
+
+    if (make && model) {
+      const makeSlug = slugify(make);
+      const modelSlug = slugify(model);
+      const uniqueKey = `${makeSlug}-${modelSlug}`;
+
+      if (!grouped[uniqueKey]) {
+        grouped[uniqueKey] = {
+          route: `/car-sales/${modelSlug}`,
+          count: 1,
+        };
+      } else {
+        grouped[uniqueKey].count++;
+      }
+    }
+  });
+
+  return Object.values(grouped);
+};
+
+const taxonomyCars = (carsalesData, taxonomy) => {
+  const grouped = {};
+
+  carsalesData.forEach((car) => {
+    const taxonomyValue = car[taxonomy].displayValue[0].toLowerCase();
+    const condition = car.condition.displayValue[0].toLowerCase();
+    const makeSlug = slugify(car.make.displayValue[0]);
+    const modelSlug = slugify(car.model.displayValue[0]);
+
+    // Creating a unique key for each taxonomy value and condition
+    const uniqueKey = `${taxonomyValue}-${condition}-${makeSlug}-${modelSlug}`;
+
+    if (!grouped[uniqueKey]) {
+      grouped[uniqueKey] = {
+        route: `/car-sales/${condition}/${modelSlug}`,
+        count: 1,
+      };
+    } else {
+      grouped[uniqueKey].count++;
+    }
+  });
+
+  return Object.values(grouped);
+};
+
 const slugify = (str) =>
   str
     .toLowerCase()
@@ -27,28 +80,15 @@ const parseCsv = async (url) => {
   });
 };
 
-const parseFirstPhoto = (photosJson) => {
-  try {
-    const photos = typeof photosJson === 'string' ? JSON.parse(photosJson) : photosJson;
-    if (photos.length > 0 && photos[0].Url) {
-      return photos[0].Url;
-    } else {
-      return null;
-    }
-  } catch (error) {
-    console.error('Error parsing photos:', error);
-    return null;
-  }
-};
-
 
 const fetchJson = async (url, errorMessage) => {
   try {
     const { data } = await axios.get(url);
-    return data;
+    // Return the vehiclesData array if it exists, otherwise return the data itself
+    return data.vehiclesData || data;
   } catch (error) {
     console.error(errorMessage, error);
-    return null;
+    return [];  // Return empty array as a safe fallback
   }
 };
 
@@ -67,7 +107,7 @@ exports.handler = async () => {
       'Error reading variants:'
     );
     const fetchedJsonCarsalesData = await fetchJson(
-      'https://driveagent.b-cdn.net/files/blood-hyundai/carsales/dataSampleKey.json',
+      'https://bloodhyundai.com.au/carsales-feed',
       'Error reading fetched JSON:'
     );
 
@@ -102,25 +142,49 @@ exports.handler = async () => {
       };
     });
 
-    const carsalesLinks = fetchedJsonCarsalesData.map((item) => {
-      const firstPhoto = parseFirstPhoto(item['photos']);
-      const img = firstPhoto
-        ? [
-            {
-              url: firstPhoto,
-            },
-          ]
-    : [];
+// Updated carsales links generation using thumb property
+const carsalesLinks = fetchedJsonCarsalesData.map((item) => ({
+  url: `/vehicle-for-sale/${item.stockid || ''}/${slugify(item.title || '')}`,
+  changefreq: 'daily',
+  priority: 0.8,
+  img: item.thumb ? [{ url: item.thumb }] : []
+}));
 
+
+const taxonomyCarLinks = taxonomyCars(fetchedJsonCarsalesData, 'body').map(groupedCar => {
   return {
-    url: `/vehicle-for-sale/${item['stockid']}/${slugify(item['title'])}`,
+    url: groupedCar.route,
     changefreq: 'daily',
     priority: 0.8,
-    img,
   };
 });
 
-const links = [...pageLinks, ...carsalesLinks, ...modelLinks, ...variantLinks];
+
+// Use the groupedCars function to group cars by make and model
+const groupedCarLinks = groupedCars(fetchedJsonCarsalesData).map(groupedCar => {
+  return {
+    url: groupedCar.route,
+    changefreq: 'daily', // Adjust as needed
+    priority: 0.8, // Adjust as needed
+  };
+});
+
+const generateBuildUrls = (modelsJson) => {
+  return modelsJson.map((model) => {
+    if (model.slug) {
+      return {
+        url: `/build/${model.slug}?sortby=price`,
+        changefreq: 'weekly', // Adjust as needed
+        priority: 0.7, // Adjust as needed
+      };
+    }
+    return null;
+  }).filter(urlObj => urlObj !== null); // Filter out any null entries
+};
+
+const buildUrls = generateBuildUrls(modelsJson);
+
+const links = [...pageLinks, ...carsalesLinks, ...modelLinks, ...groupedCarLinks, ...taxonomyCarLinks];
 
 const stream = new SitemapStream({
   hostname: 'https://bloodhyundai.com.au',
