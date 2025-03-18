@@ -15,7 +15,7 @@
                 page.template == 'finance_form' || page.template == 'contact_form' || page.template == 'parts_form' || page.template == 'fleet_form' ? 'uk-container-large' : 'uk-container-xsmall',
               ]"
             >
-              <component :is="dynamicComponent" :activeHoursTab="page.template" class="uk-margin-large-bottom" />
+              <component :is="dynamicComponent" :activeHoursTab="page.template" :id="page.template" class="uk-margin-large-bottom" />
             </div>
           </div>
         </div>
