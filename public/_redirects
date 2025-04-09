@@ -1,5 +1,3 @@
-# Redirect .well-known requests
-/.well-known/* /  301
 
 # Home page redirect
 /home /  301
@@ -18,6 +16,9 @@
 /alfanew.php / 301
 /themes.php / 301
 /wp-mail.php / 301
+
+/hyundai-servicing /service 301
+/our-stock / car-sales 301
 
 # Redirect carsales-feed requests to the serverless function
 /carsales-feed /.netlify/functions/carsales-feed 200
