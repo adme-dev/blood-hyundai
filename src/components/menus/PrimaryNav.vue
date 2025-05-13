@@ -48,6 +48,10 @@
                 <router-link to="/service" title="Vehicle servicing"><b class="uk-button uk-button-text">Book a
                     Service</b></router-link>
               </li>
+                          <li>
+                <router-link to="/fleet" title="Hyundai Fleet"><b class="uk-button uk-button-text">
+                    Fleet</b></router-link>
+              </li>
               <li>
                 <router-link to="/contact" title="Contact us"><b
                     class="uk-button uk-button-text">Contact</b></router-link>
