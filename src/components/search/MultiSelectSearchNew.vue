@@ -624,7 +624,11 @@ export default {
           });
         });
       }
-      return Object.values(groups).sort((a, b) => a.label.localeCompare(b.label));
+      return Object.values(groups).sort((a, b) => {
+        if (a.label.toLowerCase() === 'hyundai') return -1;
+        if (b.label.toLowerCase() === 'hyundai') return 1;
+        return a.label.localeCompare(b.label);
+      });
     },
 
     availableWeeklyRanges() {
