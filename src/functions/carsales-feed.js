@@ -317,6 +317,15 @@ exports.handler = async function(event, context) {
       }
     });
 
+    // Mark the last 5 vehicles as stock special
+    const startIndex = Math.max(vehicles.length - 15, 0);
+    for (let i = startIndex; i < vehicles.length; i++) {
+      vehicles[i].stock_special = {
+        value: ["stock-special"],
+        displayValue: ["STOCK SPECIAL"]
+      };
+    }
+
     //console.log(`Total vehicles processed: ${vehicles.length}`);
 
     if (vehicles.length === 0) {
