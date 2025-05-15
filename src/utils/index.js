@@ -8,14 +8,14 @@ import Vue from "vue";
 const buildQuery = ({ selected, page, sorting }) => {
   const query = {};
 
-  forEach(selected, (value, key) => {
+  for (const [key, value] of Object.entries(selected)) {
     if (Array.isArray(value)) {
       const vals = map(value, (v) => encodeURIComponent(v));
       query[key] = vals.join(",");
     } else {
       query[key] = value;
     }
-  });
+  }
 
   if (page.current > 1) {
     query.page = page.current;
@@ -31,6 +31,7 @@ const buildQuery = ({ selected, page, sorting }) => {
 
   return query;
 };
+
 const addQueryStringToSelection = (search, queryStringParams) => {
   forEach(queryStringParams, (value, key) => {
     const formatedKey = key.toLowerCase();
@@ -86,19 +87,73 @@ const processFilterQueries = (type, value) => {
   }
   return returnValue;
 };
-const isDateInRange = (start, end) => {
-  if (!end) return true;
 
-  let startDate, endDate;
-  startDate = start ? start.split("-") : ""
-  endDate = end ? end.split("-") : "";
+// Helper function to parse "DD-MM-YYYY" date strings
+const parseDateString = (dateStr) => {
+  if (!dateStr || typeof dateStr !== 'string') return null;
+  const parts = dateStr.split('-');
+  if (parts.length === 3) {
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1; // JS months are 0-indexed
+    const year = parseInt(parts[2], 10);
 
-  let currentDate = new Date();
+    // Basic validation for date components
+    if (!isNaN(day) && !isNaN(month) && !isNaN(year) &&
+        year > 1000 && year < 3000 && // Ensure a reasonable year range
+        month >= 0 && month <= 11 &&
+        day >= 1 && day <= 31) { // Basic day check (not validating days per month)
+      
+      const d = new Date(year, month, day);
+      // Verify that the date constructor interpreted the parts as intended
+      // (e.g., handles Feb 30 by rolling over, which we want to detect as invalid for strict parsing)
+      if (d.getFullYear() === year && d.getMonth() === month && d.getDate() === day) {
+        return d;
+      }
+    }
+  }
+  return null; // Indicates parsing failure or invalid date
+};
 
-  let sDate = new Date(startDate[2], parseInt(startDate[1]) - 1, startDate[0]);
-  let eDate = new Date(endDate[2], parseInt(endDate[1]) - 1, endDate[0]);
+const isDateInRange = (startStr, endStr) => {
+  const sDate = parseDateString(startStr);
+  const currentDate = new Date();
 
-  return currentDate >= sDate && currentDate <= eDate;
+  // If start date is invalid or not provided, the ticker cannot be active.
+  if (!sDate) {
+    return false;
+  }
+
+  // Compare date parts only to ensure entire days are considered.
+  // currentDay is the beginning of today.
+  const currentDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+  // startDay is the beginning of the start date.
+  const startDay = new Date(sDate.getFullYear(), sDate.getMonth(), sDate.getDate());
+
+  // If start date is in the future, not active yet.
+  if (startDay > currentDay) {
+    return false;
+  }
+
+  // At this point, startDay <= currentDay. Ticker is potentially active.
+  // Now check the end date.
+  const eDate = parseDateString(endStr);
+
+  if (eDate) { // If a valid end date is parsed
+    const endDay = new Date(eDate.getFullYear(), eDate.getMonth(), eDate.getDate());
+    // Ticker is active if currentDay <= endDay
+    if (currentDay > endDay) {
+      return false; // Current date is past the end date
+    }
+  } else if (endStr && String(endStr).trim() !== "") {
+    // An end date string was provided (and it's not just empty spaces), but it was unparseable.
+    // Treat as an invalid range, so the ticker is not active.
+    return false;
+  }
+  // If we reach here, the ticker is active:
+  // - Start date is valid and in the past or present.
+  // - AND (Either no end date string was provided (null, undefined, or empty string),
+  //        OR a valid end date was provided and currentDay is not past endDay).
+  return true;
 };
 
 const sortItems = (items, sortingConfig) => {
@@ -112,14 +167,10 @@ const sortItems = (items, sortingConfig) => {
   }
 
   if (direction === "asc") {
-    return sortBy(items, item=>{
-      return parseInt(item[by]);
-    });
+    return sortBy(items, [by, "id"]);
   }
 
-  return sortBy(items, item=>{
-    return parseInt(item[by]);
-  }).reverse();
+  return sortBy(items, [by, "id"]).reverse();
 };
 
 const formatNumber = (value, name, config) => {
@@ -140,19 +191,6 @@ const getSelectionsWithValue = (selected) => {
   }
   return selectionsWithValue;
 };
-
-const GetTime = (time) => {
-  const d = new Date(time);
-  // Use UTC methods to respect the GMT+00:00 timezone in the input
-  const hours = d.getUTCHours();
-  const displayHours = hours % 12 || 12; // Convert 0 to 12 for 12 AM
-  const minutes = d.getUTCMinutes();
-  const paddedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-  const ampm = hours >= 12 ? "pm" : "am";
-  
-  return `${displayHours}:${paddedMinutes} ${ampm}`;
-};
-
 const processTradingHours = (hours) => {
   const modifiedHours = {};
   forEach(hours, (value, key) => {
@@ -161,11 +199,11 @@ const processTradingHours = (hours) => {
       hour: "2-digit",
       minute: "2-digit",
     };
-    let currentStatus = (value[0].current.value === "by_appointment") ? value[0].current.label : value[0].current.value;
+
     modifiedHours[key] = {
-      open: GetTime(value[0].open),
-      close: GetTime(value[0].close),
-      status: currentStatus,
+      open: value[0].open,
+      close: value[0].close,
+      status: value[0].current.value,
     };
   });
   return modifiedHours;
