@@ -143,7 +143,7 @@ exports.handler = async (event, context) => {
     
         const addressElement = listing.ele('address', { format: 'simple' });
         addressElement.ele('component', { name: 'addr1' }, 'Lot 1 Princes Hwy');
-        addressElement.ele('component', { name: 'city' }, 'blood');
+        addressElement.ele('component', { name: 'city' }, 'Geelong');
         addressElement.ele('component', { name: 'region' }, 'VIC');
         addressElement.ele('component', { name: 'country' }, 'Australia');
         addressElement.ele('component', { name: 'postal_code' }, '3844');
