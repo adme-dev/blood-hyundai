@@ -459,7 +459,25 @@
 
             <sliding-tabs v-model="activeTab" :tabs="tabs" />
             <ul class="uk-list tab-content uk-background-default uk-position-relative">
-              <li v-show="activeTab === 0" class="uk-padding-small enqform">
+
+                                     <li v-show="activeTab === 0" v-if="item.price > 0">
+                <!-- <calculator :retail="item.price"></calculator> -->
+
+            <iframe 
+            :src="`https://apply.youxpowered.com.au/m5287
+            ?condition=${encodeURIComponent(item.condition.displayValue[0])}
+            &amount=${item.price}
+            &buildyear=${item.year}
+            &make=${encodeURIComponent(item.make.displayValue[0])}
+            &model=${encodeURIComponent(item.model.displayValue[0])}
+            &kilometers=${item.kms}
+            &vin=${item.vin}`"
+            style="border: 0.5px solid grey; width: 100%; border-radius: 15px; height: 740px; padding-top:10px"> 
+            </iframe>
+
+              </li>
+
+              <li v-show="activeTab ===1" class="uk-padding-small enqform">
                 <div class="uk-text-primary uk-padding-small">
                   <h3 class="uk-h3">Get in touch with us today - we'd love to help you discover if this <b>{{ item.make.displayValue[0] }} {{ item.model.displayValue[0] }}</b> is the perfect fit for you!
                  </h3>
@@ -591,9 +609,9 @@
                 </div>
               </li>
 
-              <li v-show="activeTab === 1" v-if="item.price > 0">
+              <!-- <li v-show="activeTab === 1" v-if="item.price > 0">
                 <calculator :retail="item.price"></calculator>
-              </li>
+              </li> -->
 
               <li v-show="activeTab === 2">
                 <div class="uk-grid-collapse uk-padding-small uk-child-width-1-1" uk-grid>
@@ -676,7 +694,7 @@ export default {
       confirmationMessage: "",
       readMore: false,
       activeTab: 0,
-      tabs: ['Enquire', 'Calculator', 'Location'],
+      tabs: ['Finance', 'Enquire',  'Location'],
       pendingStockId: null,
       _backRoute: document.referrer || null,
       selectedTradeInVehicle: null,

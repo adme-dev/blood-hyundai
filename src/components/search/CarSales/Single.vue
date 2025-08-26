@@ -496,7 +496,19 @@
               </carSalesSingleForm>
             </div>
 
-            <calculator :retail="item.price"></calculator>
+                        <iframe 
+            :src="`https://apply.youxpowered.com.au/m5287
+            ?condition=${encodeURIComponent(item.condition.displayValue[0])}
+            &amount=${item.price}
+            &buildyear=${item.year}
+            &make=${encodeURIComponent(item.make.displayValue[0])}
+            &model=${encodeURIComponent(item.model.displayValue[0])}
+            &kilometers=${item.kms}
+            &vin=${item.vin}`"
+            style="border: 0.5px solid grey; width: 100%; border-radius: 15px; height: 740px; padding-top: 10px"> 
+            </iframe>
+
+            <!-- <calculator :retail="item.price"></calculator> -->
 
             <viewed-vehicles />
           </div>

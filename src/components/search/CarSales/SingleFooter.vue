@@ -18,14 +18,14 @@
                 </div>
               </div>
 
-              <div>
+              <!-- <div>
                 <span class="uk-icon-button uk-text-bold fo-or">OR</span>
               </div>
 
               <div class="uk-inline">
                 <div class="uk-text-large uk-text-bold">${{perweek}} p/week <span class="perweek-icon uk-position-top-right" uk-icon="warning"></span></div>
                 <div class="uk-text-xsmall">To Approved Purchasers</div>
-              </div>
+              </div> -->
 
               <div class="uk-margin-auto-left uk-hidden@m">
                 <a
