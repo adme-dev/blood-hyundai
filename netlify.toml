@@ -1,68 +1,166 @@
-# Global headers
+[build]
+  functions = "src/functions"
+  publish = "dist"
+
+# Serverless Functions Redirects
+[[redirects]]
+  from = "/carsales-feed"
+  to = "/.netlify/functions/carsales-feed"
+  status = 200
+
+[[redirects]]
+  from = "/facebook-api"
+  to = "/.netlify/functions/facebook-api"
+  status = 200
+
+[[redirects]]
+  from = "/facebook-api.xml"
+  to = "/.netlify/functions/facebook-api"
+  status = 200
+
+[[redirects]]
+  from = "/google-api"
+  to = "/.netlify/functions/google-api"
+  status = 200
+
+[[redirects]]
+  from = "/google-api.xml"
+  to = "/.netlify/functions/google-api"
+  status = 200
+
+[[redirects]]
+  from = "/fetchReviews"
+  to = "/.netlify/functions/fetchReviews"
+  status = 200
+
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "/.netlify/functions/sitemap"
+  status = 200
+
+# Legacy redirects
+[[redirects]]
+  from = "/home"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/front"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/simple.php"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/index.php"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/hyundai-servicing"
+  to = "/service"
+  status = 301
+
+[[redirects]]
+  from = "/our-stock/*"
+  to = "/car-sales"
+  status = 301
+
+# SPA catch-all redirect (must be last)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Security and Global Headers
 [[headers]]
   for = "/*"
   [headers.values]
-    Access-Control-Allow-Origin = "*"
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
     X-Content-Type-Options = "nosniff"
     Permissions-Policy = "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), interest-cohort=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
-    
-[build]
-  functions = "src/functions"
 
-  [[redirects]]
-from = "/carsales-feed"
-to = "/.netlify/functions/carsales-feed"
-status = 200
-
-[[redirects]]
-  from = "/facebook-api"
-  to = "/.netlify/functions/facebook-api"
-  status = 200
-[[redirects]]
-  from = "/google-api"
-  to = "/.netlify/functions/google-api"
-  status = 200
-
-  [[redirects]]
-  from = "/fetchReviews"
-  to = "/.netlify/functions/fetchReviews"
-  status = 200
-
-# Redirect all requests to index.html for SPA routing
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-# netlify.toml
+# HTML Documents - No Cache to prevent stale SPA issues
 [[headers]]
-  # Cache policy for HTML documents: No caching
   for = "/*.html"
   [headers.values]
-  Cache-Control = "public, max-age=0, must-revalidate"
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
 
+# Root index.html - Critical for SPA routing
 [[headers]]
-  # Cache policy for images and fonts: Long-term caching
-  for = "/images/*"
+  for = "/index.html"
   [headers.values]
-  Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
 
+# JavaScript files - Short cache with revalidation
 [[headers]]
-  for = "/fonts/*"
+  for = "/assets/js/*"
   [headers.values]
-  Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=86400, must-revalidate"
 
 [[headers]]
-  # Cache policy for JavaScript and CSS: Versioned files benefit from long-term caching
   for = "/js/*"
   [headers.values]
-  Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=86400, must-revalidate"
+
+# CSS files - Short cache with revalidation  
+[[headers]]
+  for = "/assets/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"
 
 [[headers]]
   for = "/css/*"
   [headers.values]
-  Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=86400, must-revalidate"
+
+# Static assets - Long term cache
+[[headers]]
+  for = "/assets/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Favicon and other root assets
+[[headers]]
+  for = "/favicon.ico"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# JSON files - Short cache
+[[headers]]
+  for = "/*.json"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
+
+# Service Worker - No cache
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
