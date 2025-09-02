@@ -50,7 +50,7 @@ export default {
   computed: {
     footer_blocks() {
       const slides = this.$store.state.site.promotional[0].footerblocks;
-      return slides ? slides.filter((comp) => isDateInRange(comp.start, comp.end)) : "";
+      return slides ? slides.filter((comp) => isDateInRange(comp.start_date, comp.end_date)) : "";
     },
   },
 };
