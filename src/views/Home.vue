@@ -6,11 +6,13 @@
 
     <front-search/>
 
+    <front-slider-thumbs  class="uk-margin-large-top" />
+
     <FrontCarsalesFeatured  class="uk-background-secondary"/>
 
     <post-content v-if="page" :content="page.content.rendered" />
  
-    <front-slider-thumbs />
+    
 
     <modelSliderNew />
 
