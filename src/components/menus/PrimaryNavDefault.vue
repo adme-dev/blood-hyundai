@@ -66,7 +66,7 @@
 
     <div uk-sticky="top:800" show-on-up animation="uk-animation-slide-top"
       cls-active="uk-navbar-sticky uk-background-default" sel-target=".nav-main"
-      class="nav-main uk-navbar-transparent uk-navbar-container uk-background-default uk-sticky uk-sticky-below uk-sticky-fixed uk-box-shadow-small"
+      class="nav-main uk-navbar-transparent uk-navbar-container uk-background-default uk-sticky uk-sticky-below uk-sticky-fixed"
       style="z-index: 9999">
 
       <div id="main-navbar" class="main-navbar" @mouseover="isHoveringNav = true" @mouseleave="isHoveringNav = false">

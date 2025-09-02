@@ -190,7 +190,8 @@ padding: 10px 0 0;
 }
 @media (min-width: 960px) {
   .s-wp{
-    margin-top: -80px;
+    margin-top: 20px;
+    border-radius: 20px;
     position: relative;
     z-index: 2;
   }

@@ -7,8 +7,8 @@
     </div>
 
     <div v-else class="uk-position-relative">
-      <div class="uk-position-top">
-        <header><primary-nav /></header>
+      <div>
+        <header><primary-nav-default /></header>
       </div>
     </div>
 
