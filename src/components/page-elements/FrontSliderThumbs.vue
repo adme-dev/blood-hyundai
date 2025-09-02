@@ -14,7 +14,7 @@
           <router-link :to="slide.link">
             <div class="uk-padding-small uk-width-1-1">
               <img
-                :data-src="`${slide.image}?width=320&auto_optimize=medium`"
+                :data-src="`${slide.image}`"
                 width="320"
                 height="320"
                 class="uk-width-1-1 uk-position-relative"
