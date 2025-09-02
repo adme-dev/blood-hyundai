@@ -7,6 +7,8 @@
       </div>
     </div>
 
+    <img v-if="offerbanner" :src="offerbanner" class="uk-width-1-1" />
+
     <div v-if="filteredList" class="offers-content uk-overflow-hidden uk-padding-small">
 
       <h1 class="uk-h1 uk-text-bold uk-text-center uk-margin-medium-top uk-text-capitalize">
@@ -133,7 +135,7 @@
 
                    <div class="uk-text-center uk-padding-small">
                      <a
-                       v-if="item.disclaimer || item.disclaimer2"
+                       v-if="item.single_strip_banner || item.disclaimer2"
                        class="uk-text-meta uk-text-light"
                        :href="'#modal-disclaimer-' + item.id + ''"
                        uk-toggle
@@ -197,6 +199,7 @@ export default {
       filterOptions: {},
       variantDisabeled: true,
       siteName: this.$store.state.site.name,
+      offerbanner: this.$store.state.site.promotional[1][0].offerbanner
     };
   },
   mounted() {
