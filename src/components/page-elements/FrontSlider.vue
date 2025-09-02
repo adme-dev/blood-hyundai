@@ -86,6 +86,8 @@
       </div>
     </div>
 
+    <ul class="uk-slider-nav uk-dotnav uk-flex-center uk-margin"></ul>
+
     <!-- <ul class="uk-slider-nav uk-dotnav uk-flex-center uk-margin"></ul>
     
     <div class="uk-flex uk-flex-center uk-margin-small">
