@@ -6,7 +6,7 @@ const getSearchableText = (item) => {
     item.model?.displayValue?.[0],
     item.body?.displayValue?.[0],
     item.fuel?.displayValue?.[0],
-    item.stockid?.displayValue?.[0],
+    item.stockid,
     item.badge?.displayValue?.[0],
     item.year?.displayValue?.[0],
     item.condition?.displayValue?.[0],
@@ -26,11 +26,22 @@ const filterFunctions = {
   text: (item, value) => {
     if (!value) return true;
     
-    const searchTerms = value.toLowerCase().split(/[\s-]+/).filter(term => term.length >= 2);
+    // Split by spaces, hyphens, and commas
+    const searchTerms = value.toLowerCase().split(/[\s,\-]+/).filter(term => term.length >= 2);
     if (!searchTerms.length) return true;
 
     const searchableText = getSearchableText(item);
-    return searchTerms.every(term => searchableText.includes(term));
+    
+    // Check if all terms are numeric (likely stock IDs)
+    const allNumeric = searchTerms.every(term => /^\d+$/.test(term));
+    
+    // For stock IDs (all numeric), use OR logic - match if ANY term is found
+    // For text searches, use AND logic - match only if ALL terms are found
+    if (allNumeric) {
+      return searchTerms.some(term => searchableText.includes(term));
+    } else {
+      return searchTerms.every(term => searchableText.includes(term));
+    }
   },
 
   slider: (itemValue, value) => {

@@ -99,7 +99,8 @@ export default {
     },
 
     generateSearchSuggestions(input) {
-      const terms = input.toLowerCase().split(/[\s-]+/).filter(term => term.length >= 2);
+      // Split by spaces, hyphens, and commas
+      const terms = input.toLowerCase().split(/[\s,\-]+/).filter(term => term.length >= 2);
       const suggestions = new Map();
       
       terms.forEach(term => {
