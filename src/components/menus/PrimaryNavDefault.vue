@@ -42,10 +42,7 @@
         <div class="uk-navbar-right">
           <nav>
             <ul class="uk-navbar-nav">
-              <li>
-                <router-link to="/service" title="Vehicle servicing"><b class="uk-button uk-button-text">Book a
-                    Service</b></router-link>
-              </li>
+
                <li>
                 <router-link to="/fleet" title="Hyundai Fleet"><b class="uk-button uk-button-text">
                     Fleet</b></router-link>
@@ -57,6 +54,10 @@
               <li>
                 <router-link to="/sell-my-car" title="Sell My Car"><b class="uk-button uk-button-text">Sell My
                     Car</b></router-link>
+              </li>
+              <li>
+                <router-link to="/service" title="Vehicle servicing"><b class="uk-button uk-button-primary uk-border-rounded">Book a
+                    Service</b></router-link>
               </li>
             </ul>
           </nav>
@@ -356,6 +357,10 @@ export default {
   --uk-position-shift-offset: 0;
   --uk-position-viewport-offset: 0;
   width: 100%;
+}
+
+.tm-toolbar-container {
+padding: 4px 0 0;
 }
 
 /* #vehicle-nav-dropdown{

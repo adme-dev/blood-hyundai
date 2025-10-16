@@ -20,7 +20,7 @@
               <li>
                 <a itemprop="telephone" :href="`tel:${phoneService.replace(/[^A-Z0-9]+/gi, '')}`" class="forcelink">
                   <span class="uk-margin-xsmall-right uk-icon" uk-icon="icon: receiver; ratio: .75;"></span>
-                  <span class="uk-button uk-button-text">Service / Parts: <b>{{ phoneService }}</b></span>
+                  <span class="uk-button uk-button-primary uk-border-rounded">Service / Parts: <b>{{ phoneService }}</b></span>
                 </a>
               </li>
               <li>
