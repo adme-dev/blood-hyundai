@@ -45,8 +45,8 @@
           <nav>
             <ul class="uk-navbar-nav">
               <li>
-                <router-link to="/service" title="Vehicle servicing"><b class="uk-button uk-button-text">Book a
-                    Service</b></router-link>
+                <a href="https://consumer.xtime.net.au/scheduling/?&webKey=ahy20140925h3222v&bx=470928&VARIANT=HYUNDAIAUSTRALIA&WMODE=true&bx1=470928#/" title="Vehicle servicing" target="_blank"><b class="uk-button uk-button-text">Book a
+                    Service</b></a>
               </li>
                           <li>
                 <router-link to="/fleet" title="Hyundai Fleet"><b class="uk-button uk-button-text">

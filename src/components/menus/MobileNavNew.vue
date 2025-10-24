@@ -8,9 +8,10 @@
             <div class="uk-padding-small uk-padding-remove-top">
               <searchQueryText :close="true" />
 
-              <router-link to="/service" @click.native="closeNav"
+              <a href="https://consumer.xtime.net.au/scheduling/?&webKey=ahy20140925h3222v&bx=470928&VARIANT=HYUNDAIAUSTRALIA&WMODE=true&bx1=470928#/" @click.native="closeNav"
                 class="uk-button uk-button-secondary uk-button-large uk-border-rounded uk-width-1-1 uk-margin-medium-top"
-                style="font-size: 1.1rem">Book a Service</router-link>
+                target="_blank"
+                style="font-size: 1.1rem">Book a Service</a>
             </div>
           </li>
           <li>
