@@ -1,0 +1,332 @@
+# Project Intelligence: Blood Hyundai / Drive Agent
+
+## Critical Implementation Paths
+
+### Search & Filter System
+The search system is the heart of this application. Key learnings:
+
+1. **Filter Matching Logic** (`/src/utils/matchItems.js`)
+   - Central filtering engine for all search operations
+   - Supports 8 filter types (text, slider, checkbox, radio, select, multiselect, date, multiple)
+   - **Text search has intelligent OR/AND logic**:
+     - All numeric terms (stock IDs) → OR logic (match ANY)
+     - Mixed terms (text) → AND logic (match ALL)
+   - Always return the original items array on error (graceful degradation)
+
+2. **Filter Components** (`/src/components/search/Filters/`)
+   - Each filter type has its own component
+   - Must dispatch to Vuex store: `this.$store.dispatch("select", { name, value })`
+   - URL synchronization is critical for shareability
+   - Use debouncing for text inputs (300ms standard)
+
+3. **Search State Flow**
+   ```
+   Component → Vuex Action → Mutation → matchItems() → Filtered Results → UI
+   ```
+
+### Vuex Store Patterns
+
+1. **Module Structure**
+   - Root store in `/src/store/index.js`
+   - Modules in `/src/store/modules/`
+   - Keep search logic in `searchData.js` module
+
+2. **State Updates**
+   - Actions for async operations
+   - Mutations for synchronous state changes
+   - Always use proper action/mutation pattern (don't mutate directly)
+
+3. **Route Synchronization**
+   - Update URL when filters change: `this.$router.push({ query })`
+   - Watch `$route.query` to sync URL → store
+   - Handle navigation guards for state persistence
+
+### Component Architecture
+
+1. **Smart vs Presentational**
+   - Smart components (e.g., `/src/components/search/template.vue`): Connect to Vuex, handle logic
+   - Presentational components (e.g., filters): Receive props, emit events
+   - Keep business logic out of presentational components
+
+2. **Form Elements**
+   - Reusable form components in `/src/components/form-elements/`
+   - Use Vuelidate for validation
+   - Element UI for base components (el-input, el-select, etc.)
+
+3. **Lazy Loading**
+   - Route-level code splitting with webpackChunkName comments
+   - Image lazy loading for performance
+   - Component-level lazy loading for modals/dialogs
+
+## User Preferences & Workflow
+
+### Development Workflow
+1. **Local Development**: `npm run serve` (runs on port 8888, not 8080)
+2. **Build**: Requires `NODE_OPTIONS=--openssl-legacy-provider` flag
+3. **Deployment**: Automatic via Netlify on push to main
+
+### Code Style Preferences
+- **Vue Options API** (not Composition API - this is Vue 2.7)
+- **Consistent naming**: kebab-case for files, PascalCase for components
+- **Error handling**: Try-catch with console.error + context, always provide fallback
+- **Comments**: Explain WHY, not WHAT (especially for complex logic)
+
+### Testing Approach
+- Manual testing in development
+- Test with real URLs (includes query params)
+- Always test backward compatibility when modifying core utilities
+
+## Project-Specific Patterns
+
+### Data Structures
+
+1. **Vehicle Objects**
+   ```javascript
+   {
+     title: "Vehicle Title",
+     stockid: "320433887",
+     make: { displayValue: ["Nissan"] },
+     model: { displayValue: ["X-Trail"] },
+     body: { displayValue: ["SUV"] },
+     fuel: { displayValue: ["Petrol"] },
+     badge: { displayValue: ["ST"] },
+     year: { displayValue: ["2024"] },
+     condition: { displayValue: ["New"] },
+     search_keywords: { displayValue: ["keyword1", "keyword2"] }
+   }
+   ```
+
+2. **Filter Configuration**
+   ```javascript
+   {
+     name: "text",
+     type: "text",
+     displayName: "Search",
+     minLength: 2,
+     timeout: 300
+   }
+   ```
+
+### API Service Layer
+
+**Pattern**: Centralized in `/src/services/`
+```javascript
+// Good
+import { vehicle } from '@/services';
+const data = await vehicle.getById(id);
+
+// Avoid
+import axios from 'axios';
+const data = await axios.get('/api/...');
+```
+
+### Netlify Functions
+
+**Location**: `/src/functions/`
+**Pattern**:
+```javascript
+exports.handler = async (event, context) => {
+  try {
+    // Function logic
+    return {
+      statusCode: 200,
+      body: JSON.stringify(data)
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: error.message })
+    };
+  }
+};
+```
+
+## Known Challenges
+
+### 1. Legacy Build System
+- **Issue**: Requires `--openssl-legacy-provider` flag
+- **Why**: Older dependencies not compatible with newer Node.js
+- **Impact**: Limits Node.js version
+- **Workaround**: Configured in package.json build script
+
+### 2. Vue 2 Ecosystem
+- **Issue**: Vue 2 is in maintenance mode
+- **Why**: Project predates Vue 3
+- **Impact**: Limited to Vue 2 compatible packages
+- **Future**: Plan migration to Vue 3 when time permits
+
+### 3. Private Dependency
+- **Package**: driveagent-ui
+- **Issue**: Private GitHub repo with token auth
+- **Impact**: Need valid GitHub token to install
+- **Note**: Token in package.json (should use .npmrc in future)
+
+### 4. Mixed Filter Types
+- **Challenge**: Many filter type variations (checkbox, multiselect, multiple)
+- **Solution**: Centralized handler in matchItems.js
+- **Pattern**: Map filter name → type, then type → handler function
+
+## Evolution of Project Decisions
+
+### Search Logic Evolution
+1. **Initial**: Simple text matching with AND logic
+2. **Problem**: Stock ID searches needed OR logic
+3. **Solution**: Auto-detect numeric searches, apply OR logic
+4. **Learning**: Context-aware logic better than explicit modes
+
+### Component Organization
+1. **Initial**: Flat component structure
+2. **Evolution**: Organized by feature (search/, menus/, models/, etc.)
+3. **Current**: Feature-based with shared utilities
+4. **Best Practice**: Keep related components together
+
+### State Management
+1. **Initial**: Local component state
+2. **Evolution**: Centralized Vuex store
+3. **Current**: Module-based Vuex with persistence
+4. **Learning**: Persist critical state (filters) to localStorage
+
+## Tool Usage Patterns
+
+### Debugging
+```javascript
+// Check store state
+console.log('Store:', this.$store.state);
+console.log('Filtered:', this.$store.getters['searchData/filteredVehicles']);
+
+// Check route state
+console.log('Query:', this.$route.query);
+
+// Test filter matching
+import matchItems from '@/utils/matchItems';
+console.log(matchItems(items, selected, filters));
+```
+
+### Common Operations
+
+**Add a new filter type**:
+1. Add handler to `filterFunctions` in `matchItems.js`
+2. Create component in `/src/components/search/Filters/`
+3. Register in filter configuration
+4. Update store to handle filter type
+
+**Modify search behavior**:
+- Primary file: `/src/utils/matchItems.js`
+- Test with: `/car-sales?search_keywords=...`
+- Check: Both single and multiple terms
+- Verify: URL state synchronization
+
+**Add new vehicle field to search**:
+- Update `getSearchableText()` in `matchItems.js`
+- Add field to array of searchable properties
+- Ensure field has proper data structure
+
+## Performance Considerations
+
+### Critical Paths
+1. **Search filtering**: Must be < 100ms
+2. **Page load**: Target < 2s on 4G
+3. **Image loading**: Lazy load all images
+4. **Bundle size**: Code split by route
+
+### Optimization Strategies
+- Debounce user input (300ms)
+- Lazy load images (IntersectionObserver)
+- Code split routes (webpackChunkName)
+- Cache API responses where appropriate
+- Use computed properties for derived state
+
+## Integration Points
+
+### External Services
+- **Stripe**: Payment processing (via Netlify functions)
+- **Google**: Analytics, Reviews, Tag Manager
+- **Facebook**: Customer chat widget
+- **YouTube**: Video embedding
+
+### Data Sources
+- **Static JSON**: Vehicle data in `/public/vehicles/`
+- **API**: Dynamic content via Netlify functions
+- **CMS**: Page content (integrated via services)
+
+## Quick Wins & Best Practices
+
+### When Adding Features
+1. ✅ Check if similar functionality exists first
+2. ✅ Follow existing patterns (don't invent new ones)
+3. ✅ Update Memory Bank documentation
+4. ✅ Test backward compatibility
+5. ✅ Add inline comments for complex logic
+
+### When Fixing Bugs
+1. ✅ Understand the full data flow first
+2. ✅ Check both component and store logic
+3. ✅ Verify URL synchronization
+4. ✅ Test with edge cases
+5. ✅ Document the fix
+
+### Code Quality Checklist
+- [ ] No console.error in production (use proper error handling)
+- [ ] Fallback values for undefined data
+- [ ] Proper error boundaries (try-catch)
+- [ ] Loading states for async operations
+- [ ] Graceful degradation (if feature fails, app continues)
+
+## Memory Bank Usage
+
+### When Starting Work
+**MUST READ** (in order):
+1. `projectbrief.md` - Understand the goals
+2. `productContext.md` - Understand the why
+3. `systemPatterns.md` - Understand the how
+4. `techContext.md` - Understand the tech
+5. `activeContext.md` - Understand current state
+6. `progress.md` - Understand what's done
+
+### When Completing Work
+**MUST UPDATE**:
+1. `activeContext.md` - Current focus and decisions
+2. `progress.md` - What's done, what's left
+3. Feature docs in `/memory-bank/features/` (if applicable)
+4. This file (.cursorrules) if new patterns discovered
+
+## Critical Reminders
+
+⚠️ **This is Vue 2.7, NOT Vue 3**
+- Use Options API
+- Use Vue Router 3.x syntax
+- Use Vuex 3.x patterns
+- Check package compatibility
+
+⚠️ **Always Test Search Changes**
+- Single term searches
+- Multiple term searches  
+- Stock ID searches (numeric)
+- Empty searches
+- URL query parameters
+
+⚠️ **State Synchronization**
+- Component ↔ Store ↔ URL must stay in sync
+- Use watchers for $route.query
+- Use router.push for URL updates
+- Don't forget to debounce
+
+⚠️ **Error Handling Pattern**
+```javascript
+try {
+  // Operation
+  return result;
+} catch (error) {
+  console.error('Context:', error);
+  return fallbackValue; // Always provide fallback
+}
+```
+
+---
+
+**Project Status**: Production & Stable  
+**Last Updated**: October 16, 2025  
+**Key Recent Change**: Multiple stock ID search feature
+
+
+
