@@ -358,27 +358,31 @@ line-height: 1.2;
 /* Pulse animation for Book a Service button */
 .pulse-button {
   animation: pulse-animation 2s ease-in-out infinite;
-  box-shadow: 0 0 0 0 rgba(0, 30, 80, 0.7);
+  box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+  background-color: #dc2626 !important;
+  border-color: #dc2626 !important;
 }
 
 @keyframes pulse-animation {
   0% {
     transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(0, 30, 80, 0.7);
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
   }
   50% {
     transform: scale(1.05);
-    box-shadow: 0 0 0 10px rgba(0, 30, 80, 0);
+    box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
   }
   100% {
     transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(0, 30, 80, 0);
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
   }
 }
 
 .pulse-button:hover {
   animation: none;
   transform: scale(1.05);
+  background-color: #b91c1c !important;
+  border-color: #b91c1c !important;
 }
 
 @media (min-width: 1200px) {

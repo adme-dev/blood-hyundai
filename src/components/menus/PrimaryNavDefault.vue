@@ -42,7 +42,10 @@
         <div class="uk-navbar-right">
           <nav>
             <ul class="uk-navbar-nav">
-
+             <li>
+                <a href="https://consumer.xtime.net.au/scheduling/?&webKey=ahy20140925h3222v&bx=470928&VARIANT=HYUNDAIAUSTRALIA&WMODE=true&bx1=470928#/" title="Vehicle servicing" target="_blank"><b class="uk-button uk-button-primary uk-border-rounded pulse-button">Book a
+                    Service</b></a>
+              </li>
                <li>
                 <router-link to="/fleet" title="Hyundai Fleet"><b class="uk-button uk-button-text">
                     Fleet</b></router-link>
@@ -55,10 +58,7 @@
                 <router-link to="/sell-my-car" title="Sell My Car"><b class="uk-button uk-button-text">Sell My
                     Car</b></router-link>
               </li>
-              <li>
-                <a href="https://consumer.xtime.net.au/scheduling/?&webKey=ahy20140925h3222v&bx=470928&VARIANT=HYUNDAIAUSTRALIA&WMODE=true&bx1=470928#/" title="Vehicle servicing" target="_blank"><b class="uk-button uk-button-primary uk-border-rounded pulse-button">Book a
-                    Service</b></a>
-              </li>
+ 
             </ul>
           </nav>
         </div>
@@ -366,27 +366,31 @@ padding: 4px 0 0;
 /* Pulse animation for Book a Service button */
 .pulse-button {
   animation: pulse-animation 2s ease-in-out infinite;
-  box-shadow: 0 0 0 0 rgba(0, 30, 80, 0.7);
+  box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+  background-color: #dc2626 !important;
+  border-color: #dc2626 !important;
 }
 
 @keyframes pulse-animation {
   0% {
     transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(0, 30, 80, 0.7);
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
   }
   50% {
     transform: scale(1.05);
-    box-shadow: 0 0 0 10px rgba(0, 30, 80, 0);
+    box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
   }
   100% {
     transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(0, 30, 80, 0);
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
   }
 }
 
 .pulse-button:hover {
   animation: none;
   transform: scale(1.05);
+  background-color: #b91c1c !important;
+  border-color: #b91c1c !important;
 }
 
 /* #vehicle-nav-dropdown{
