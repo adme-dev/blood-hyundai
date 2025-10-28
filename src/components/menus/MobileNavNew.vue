@@ -9,7 +9,7 @@
               <searchQueryText :close="true" />
 
               <a href="https://consumer.xtime.net.au/scheduling/?&webKey=ahy20140925h3222v&bx=470928&VARIANT=HYUNDAIAUSTRALIA&WMODE=true&bx1=470928#/" @click.native="closeNav"
-                class="uk-button uk-button-secondary uk-button-large uk-border-rounded uk-width-1-1 uk-margin-medium-top"
+                class="uk-button uk-button-secondary uk-button-large uk-border-rounded uk-width-1-1 uk-margin-medium-top pulse-button"
                 target="_blank"
                 style="font-size: 1.1rem">Book a Service</a>
             </div>
@@ -353,6 +353,32 @@ line-height: 1.2;
 .target.uk-open .uk-icon {
   color: #c00;
   transform: rotate(90deg);
+}
+
+/* Pulse animation for Book a Service button */
+.pulse-button {
+  animation: pulse-animation 2s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(0, 30, 80, 0.7);
+}
+
+@keyframes pulse-animation {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 30, 80, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(0, 30, 80, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 30, 80, 0);
+  }
+}
+
+.pulse-button:hover {
+  animation: none;
+  transform: scale(1.05);
 }
 
 @media (min-width: 1200px) {

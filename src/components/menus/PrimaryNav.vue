@@ -45,7 +45,7 @@
           <nav>
             <ul class="uk-navbar-nav">
               <li>
-                <a href="https://consumer.xtime.net.au/scheduling/?&webKey=ahy20140925h3222v&bx=470928&VARIANT=HYUNDAIAUSTRALIA&WMODE=true&bx1=470928#/" title="Vehicle servicing" target="_blank"><b class="uk-button uk-button-text">Book a
+                <a href="https://consumer.xtime.net.au/scheduling/?&webKey=ahy20140925h3222v&bx=470928&VARIANT=HYUNDAIAUSTRALIA&WMODE=true&bx1=470928#/" title="Vehicle servicing" target="_blank"><b class="uk-button uk-button-text pulse-button">Book a
                     Service</b></a>
               </li>
                           <li>
@@ -428,6 +428,32 @@ export default {
   font-size: 24px;
   font-weight: 700;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+/* Pulse animation for Book a Service button */
+.pulse-button {
+  animation: pulse-animation 2s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(0, 30, 80, 0.7);
+}
+
+@keyframes pulse-animation {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 30, 80, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(0, 30, 80, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 30, 80, 0);
+  }
+}
+
+.pulse-button:hover {
+  animation: none;
+  transform: scale(1.05);
 }
 
 /* #vehicle-nav-dropdown{
