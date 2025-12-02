@@ -62,7 +62,7 @@
 
             <div v-if="slide.video" class="uk-height-1-1 uk-position-relative">
               <video :src="slide.video" loop muted playsinline uk-video="autoplay: inview" :poster="slide.video_poster"
-                uk-cover></video>
+                ></video>
 
               <div class="uk-position-bottom-left uk-padding uk-width-medium uk-text-left">
                 <h2 v-bind:class="'' + slide.contrast + ''"
